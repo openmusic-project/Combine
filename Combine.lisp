@@ -1,8 +1,7 @@
 ;;
-;;
 ;;            Combine
 ;;
-;;      by Mikhail Malt  © IRCAM 1996
+;;      by Mikhail Malt  Â© IRCAM 1996
            
 (in-package :om)
 
@@ -29,5 +28,5 @@
 (print "
 ;;            Combine loader
 ;;
-;;      by Mikhail Malt  © IRCAM 1996
+;;      by Mikhail Malt  Â© IRCAM 1996
 ")
