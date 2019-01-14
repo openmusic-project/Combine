@@ -6,7 +6,7 @@
            
 (in-package :om)
 
-(compile&load (om-relative-path '("sources") "FERNEYHOUGH"))
+(compile&load (om-relative-path '("sources") "ferneyhough"))
 
 
 ; ("sub-pack-name" subpacke-lists class-list function-list class-alias-list)
@@ -22,12 +22,12 @@
                     ))
 
 
-(om::set-lib-release 1.0)
+(om::set-lib-release 1.1)
 
 (om::add-lib-alias "OMCombine" "Combine")
 
 (print "
-;;            Combine loader
+;;            Combine
 ;;
 ;;      by Mikhail Malt  © IRCAM 1996
 ")
