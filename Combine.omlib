@@ -1,0 +1,34 @@
+
+(:om-lib
+ 
+ (:version 1.2)
+
+ (:author "M. Malt, IRCAM (1996)")
+
+ (:source-files "sources/ferneyhough")
+
+ (:symbols
+  (:packages
+    (:package 
+      (:name "Basic")
+      (:functions ser-op rot90 serie-space))
+    (:package 
+      (:name "Permut")
+      (:functions combinations messiaen prolifer saw rand-saw
+                  circ-saw oscil-permutn rev-saw spiral kreus kreus-1
+                  permut-dyn permut-dyn1 single-to-1 single-to-x
+                  permut->to-1 permut->to-x))
+    (:package 
+      (:name "Analyse")
+      (:functions l-analyse))
+    (:package 
+      (:name "Conv")
+      (:functions mc->m m->mc octave-c3))
+    (:package 
+      (:name "Tools")
+      (:functions geomt ratio-list ratio-freq g-subs gl-subs segment l-segment))
+  ))
+)
+
+
+

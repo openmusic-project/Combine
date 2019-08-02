@@ -27,29 +27,16 @@
 (defvar aux1 nil)
 (defvar aux2 nil)
 
-(defmethod* old-list-modulo ((list list) (ncol integer))
-  :initvals '((1 2) 2) 
-  :indoc '("a list" "modulo")
-  :icon 235
-  :doc 
-  "list-modulo  groups elements of a list that occur at regular intervals,
- and returns these groups as a list of lists. <ncol> defines the interval between occurences.
- For example, if we take the list (1 2 3 4 5 6 7 8 9) and give 2 for ncol, the result 
-is ((1 3 5 7 9) (2 4 6 8)).  "
+(defmethod old-list-modulo ((list list) (ncol integer))
   (when (> ncol 0) (list-part list ncol)))
 
-
-
-
-
 ;=====================manipulations frequentielles================================
-
 
 
 (defmethod! ratio-freq ((fund  integer) (ratio number))
   :icon 129
   :initvals '(6000 0)
-  :doc "calcule une liste de fréquences avec des relations <ratio>"
+  :doc "Computes a list of frequencies with <ratio> relations."
   (let ((note (mc->f fund))  (aux))
     (push note aux)
     (dolist (n ratio)
@@ -57,27 +44,24 @@ is ((1 3 5 7 9) (2 4 6 8)).  "
     (f->mc (reverse aux))))
 
 
-;;; !! Danger: redefines CL function "RATIO"
-(om-with-redefinitions
-(defmethod! ratio  ((init integer) (ratio number)  (n integer)) 
+;;; !! Formerly called RATIO / conflicted with CL ratio
+(defmethod! ratio-list  ((init integer) (ratio number)  (n integer)) 
   :icon 129
   :initvals '(0 0 1)
-  :doc "prend en entrée un intervalle <init> en midicents et un <ratio>
-pour construire une liste de <n> éléments avec des ratios decroissants d'intervalles
-entre eux"
+  :doc "Takes an interval <init> in midicents and a <ratio>
+to build a list of <n> elements with decreasing intervals."
   (let ((aux (first init)) (val))
-    (dotimes (x  n)
+    (dotimes (x n)
       (push aux val)
       (setf aux (* aux ratio)))
     (reverse val)))
-)
 
 ;==============================piqué (still) from Laurent Poittier=======================
 (defmethod! geomt ((init number ) (n integer)  (pas number)) 
   :icon 129
   :initvals '(0 1 0)
-  :doc "Construit une série géometrique de <n> éléments 
-avec valeur initiale <init> et facteur multiplicatif <pas> "
+  :doc "Builds a geometric series of <n> elements 
+awith initial value <init> a a factor <pas>."
   (if (= n 0) ()
       (cons init (geomt (* pas init) (1- n) pas))))
 ;=================================================================================
@@ -93,9 +77,9 @@ avec valeur initiale <init> et facteur multiplicatif <pas> "
 (defmethod! g-subs (( sequence list) (old number) (new number))
   :icon 129
   :initvals '((1 2) 1 0)
-  :doc "substitue <old> par <new> à n'importe quel niveau
- <old> et <new> peuvent Ítre un nombre ou un symbole.
-<new> peut Ítre aussi une liste"
+  :doc "Substitutes <old> by <new> anywhere.
+<old> and <new> can be numbers or symbols.
+<new> can also be a list."
   (deep-mapcar/1  #'(lambda (x) (if (equalp x old) new x)) sequence))
 
 
@@ -110,8 +94,7 @@ avec valeur initiale <init> et facteur multiplicatif <pas> "
 (defmethod! gl-subs ((list1 list) (list2 list))
   :icon 129
   :initvals '((1 2) (1 2))
-  :doc "substitution des éléments de la liste2 (plate) 
-              dans la liste1 (avec plusieurs niveaux)"
+  :doc "Substitution of elements in liste2 (flat) in liste1 (with several levels)"
   (let ((index -1) )
     (subs-prof-list list1 list2)))
 
@@ -122,9 +105,6 @@ avec valeur initiale <init> et facteur multiplicatif <pas> "
 ;;          V1.0
 ;;                                 functions by Mikhail Malt   08/10/1993 Paris IRCAM
 
-
- 
-
 (defmethod! ser-op ((serie list) 
                     (oper integer)
                     &optional (mode 1 ) (in/pi 0))
@@ -132,10 +112,12 @@ avec valeur initiale <init> et facteur multiplicatif <pas> "
   :initvals '((6000 6300 6600 6400 6500 7100) 1 1 0)
   :menuins '( (1 (("-O-"  1) ("-R-" 2) ("-I-" 3) ("-RI-" 4)))
                (2 (("interv"  1) ("note" 2) )))
-  :doc "Les quatre opérations de base de la musique sérielle.
-Les entrées optionnelles permetent d'obtenir les quatres formes avec des 
-contrÙles différents. 
-OBS: dans le mode <interv> la transposition est indiquée en midicents!!"
+  :doc "The four basic serial music operations.
+
+The optional inputs allow to obtain the four forms with different controls.
+
+Note: in the mode <interv> transposition is in en midicents!"
+
   (case oper 
     (1 (if   (or (= 1 mode) (= 2 mode))  (case mode 
                                            (1 (om+ in/pi serie))
@@ -159,8 +141,8 @@ OBS: dans le mode <interv> la transposition est indiquée en midicents!!"
 (defmethod! rot90 ((serie list)  &optional (mod 12)) 
   :icon 129
   :initvals '((6000) 12)
-  :doc "La rotation de 90° selon Walter O'Connell. 
-Inversion entre dates et hauteurs"
+  :doc "Rotation of 90� from Walter O'Connell. 
+Inversion between dates and pitches."
   (m->mc 
    (second 
     (mat-trans 
@@ -171,10 +153,9 @@ Inversion entre dates et hauteurs"
 (defmethod! serie-space ((serie list) (gen number) &optional (mod 12)) 
   :icon 129
   :initvals '((6000) 1 12)
-  :doc "transformation d'une série par changement d'espace.
-<gen> est le générateur du nouveau espace et
-<mod> est le modulo sur lequel nous travaillons ce dernier est
-un parametre optionnel il est par défaut 12"
+  :doc "Transformation of a series by switching space.
+<gen> is the generator of the new space.
+<mod> is the modulo on which we operate (default=12)."
   (let ((aux nil) )
     (dotimes (n mod aux)
       (push (list n (mod (* n gen) mod)) aux))
@@ -188,8 +169,10 @@ un parametre optionnel il est par défaut 12"
 (defmethod! retire ((liste list) (place integer) (n-elem integer))
   :icon 129
   :initvals '((1 2 3 4) 1 2)
-  :doc "retire les <n-elem> éléments de la liste <liste> à partir de la place
-<place>. OBS: place=0 c'est-à-dire premier élément de liste"
+  :doc "Removes the <n-elem> in <liste> from position <place>. 
+
+Note: place=0 is the first element in the list."
+
   (subseq  liste place n-elem))
 
 
@@ -199,9 +182,12 @@ un parametre optionnel il est par défaut 12"
   :initvals '((1 2 3 4) 0 1 1)
   :menuins '( (3 (("lin" 1) ("circ" 2) )) )
   
-  :doc "retire les <n-elem> éléments de la liste <liste> à partir de la place
-<place>. OBS: place=0 c'est-à-dire premier élément de liste.
-Il est possible de choisir deux types de lectures -lineaire- ou -circulaire-"
+  :doc "Removes the <n-elem> in <liste> from position <place>. 
+
+Note: place=0 is the first element in the list.
+
+<lecture> allows to choose between linear or circular reading of the list."
+
   (case lecture
     (1 (if (> (length liste) (+ place n-elem)) (subseq  liste place  (+ place n-elem))
            (nthcdr place (butlast liste 0))))
@@ -217,20 +203,22 @@ Il est possible de choisir deux types de lectures -lineaire- ou -circulaire-"
   :initvals '((1 2 ) (1 2 ) (1 2 ) 1)
   :menuins '( (3 (("lin" 1) ("circ" 2) )) )
   
-  :doc "retire les <n-elem> éléments de la liste <liste> à partir de la place
-<place>. OBS: place=0 c'est-à-dire premier élément de liste.
-Il est possible de choisir deux types de lectures -lineaire- ou -circulaire-.
-Cette version autorise des listes por <place> et pour <n-elem>.
-Comme toujours la liste plus courte sera considérée!"
-  (mapcar #'(lambda (x y) (segment liste x  y lecture)) place  n-elem))
+  :doc "Removes the <n-elem> in <liste> from position <place>. 
+
+Note: place=0 is the first element in the list.
+
+<lecture> allows to choose between linear or circular reading of the list.
+
+<place> and <n-elem> can be lists: the shortest list will stop the process!"
+
+  (mapcar #'(lambda (x y) (segment liste x y lecture)) place n-elem))
 
 
 
 (defmethod! analyse ((accord list))
   :icon 129
   :initvals '((1 2 3 4))
-  :doc "analyse un accord ou une liste et retourne une liste avec tous les intervalles
-contenus dans chaque accord"
+  :doc "Analyzes a chord or list and returns a list with all intervals in each chord."
   (sort 
    (remove nil 
            (flat (maplist  #'(lambda (x) (om- (rest x) (first x))) accord))) #'<))
@@ -238,12 +226,10 @@ contenus dans chaque accord"
 (defmethod! l-analyse ((accord list))
   :icon 129
   :initvals '((1 2 3 4))
-  :doc "analyse un accord ou une liste et retourne une liste avec tous les intervalles
-contenus dans chaque accord"
-  
+  :doc "Analyzes a chord or list and returns a list with all intervals in each chord."
   (cond
-   ((listp (first accord)) (mapcar  #'(lambda (x) (analyse (sort   x '<))) accord))
-   (t (analyse (sort   accord '<)))))   
+   ((listp (first accord)) (mapcar  #'(lambda (x) (analyse (sort x '<))) accord))
+   (t (analyse (sort accord '<)))))   
    
 ;------------mod-----------------
 (defmethod* om-mod ((self number) (num number))  
@@ -274,28 +260,26 @@ contenus dans chaque accord"
               (om-ceiling  input )) self))
 
 
-
-
 (defmethod! mc->M ((liste t) &optional (mod 12)) 
   :icon 129
   :initvals '(6000 12)
-  :doc "conversion d'une liste de midicents en classes residuelles modulo <mod>
-Le module par défaut est 12, il est possible d'utiliser d'autres modulos.
-Le do3 est toujours la note de référence"
+  :doc "Conversion of a list of midicents into residual classes modulo <mod>.
+The modulo by default is 12.
+C3 is the reference pitchs."
   (om-mod (om/ liste (om/ 100 (/ mod 12)))  mod))
 
 (defmethod! M->mc ((liste list) &optional (mod 12) (ref 6000)) 
   :icon 129
   :initvals '((1 2) 12 6000)
-  :doc "conversion d'une liste classes residuelles modulo <mod> en midicents  
-Le module par défaut est 12, il est possible d'utiliser d'autres modulos.
-Le do3 est toujours la note de référence"
-  (om+ ref  (om* liste (om/ 1200 mod)  )))
+  :doc "Conversion of a list of residual classes modulo <mod> into midicents. 
+The modulo by default is 12.
+C3 is the reference pitchs."
+  (om+ ref (om* liste (om/ 1200 mod))))
 
 (defmethod! octave-c3 ((midic integer)) 
   :icon 129
   :initvals '( 6000)
-  :doc "retourne l'octave à partir de c3=octave 3"
+  :doc "Returns the octave from c3=octave 3"
   (let ((midic (list! midic)))
     (mapcar #'(lambda (x) (om- (om// x 1200) 2) ) midic)))
 
@@ -308,14 +292,14 @@ Le do3 est toujours la note de référence"
 ;==================FONCTIONS AUXILIAIRES================================
 
 (defun construct-memo (aux2 liste-base memo-pos)
-  "CONSTRUCTION DE LA LISTE DES POSITIONS APPARIEES"
+  "Contruction of the list of paired positions"
   (dotimes (n (length aux2) memo-pos)
     (if (eql (nth n aux2) (nth n liste-base)) 
       (setf (nth n memo-pos) (nth n aux2))))
   memo-pos)
     
 (defun construct-aux2 (aux2 aux3 memo-pos)
-  "CONSTRUCTION DE LA LISTE PERMUTEE"
+  "Contruction of the permuted list"
   (let ( (indice 0))
     (dotimes (m (length aux2))
       (if (eql 0 (nth m memo-pos)) (prog ()
@@ -326,7 +310,7 @@ Le do3 est toujours la note de référence"
     aux2))
  
 (defun construct-aux3 (aux2 memo-pos)
-  "construction de la liste à permuter"
+  "Construction of the list to permute"
   (let ((aux3))
     (dotimes (n (length aux2))
       (if (= 0 (nth n memo-pos))
@@ -359,26 +343,32 @@ Le do3 est toujours la note de référence"
 (defmethod! cartesian ((l1? t) (l2? t) fun) 
   :icon 129
   :initvals '((1 2 3 4) (5 6 7 8) +)
-  :doc "Applies the function fun to elements 
+  :doc 
+  (mapcar #'(lambda (x) (mapcar #'(lambda (y) (funcall fun x y)) (list! l2?))) (list! l1?)))
+|#
+
+(defun cartesian-op (l1 l2 fun) 
+  "Applies the function fun to elements 
 of l1? and l2? considered as matrices. 
 Like  g-oper ;fun may be a Lisp function 
 (list, +, *, cons, etc.)  or a function object 
 created by  the  make-num-fun ;box .
 The result is a cartesian product of l1? by l2?.
 "
-  (mapcar #'(lambda (x) (mapcar #'(lambda (y) (funcall fun x y)) (list! l2?))) (list! l1?)))
-|#
+  (mapcar #'(lambda (x) (mapcar #'(lambda (y) (funcall fun x y)) (list! l2))) (list! l1)))
+
 
 (defun combx (vals n)
   (cond
    ((<=  n 0) vals)
    (t (flat-once 
-       (cartesian vals (combx vals (1- n)) 'x-append)))))
+       (cartesian-op vals (combx vals (1- n)) 'x-append)))))
+
 
 (defmethod! combinations ((vals list) (n integer))
   :icon 129
   :initvals '((1 2) 2)
-  :doc "combination de <vals> n a n"
+  :doc "Combination of <vals> <n> to <n>"
   (let ((n (1- n)))
     (combx vals n)))
 
@@ -388,16 +378,16 @@ The result is a cartesian product of l1? by l2?.
 (defmethod! messiaen ((list list) &optional (max 2))
   :icon 129
   :initvals '((1 2) 2)
-  :doc "permutation cyclique à la manière de messiaen"
+  :doc "Cyclic permutation - Messiaen-style"
   (let ((ref list)
         (permut nil)
         (n 1)
         (aux (list list)))
-    (while (not (or (equal ref permut) (>= n max)))
-           (setf permut (first aux))
-           (setf permut (posn-match permut list))
-           (push permut aux)
-           (incf n))
+    (loop while (not (or (equal ref permut) (>= n max)))
+          do (setf permut (first aux))
+          (setf permut (posn-match permut list))
+          (push permut aux)
+          (incf n))
     (reverse aux)))
 
 ;(messiaen '(6 2 8 5 3 4 1 7 0) 30)
@@ -406,9 +396,8 @@ The result is a cartesian product of l1? by l2?.
 (defmethod! prolifer ((serie1 list) (serie2 list) &optional (mod 12)) 
   :icon 129
   :initvals '((1 2) (1 2) 12)
-  :doc "les séries proliferantes selon Baraqué"
+  :doc "Proliferating series from Baraqu�"
   (let* ((factmod (/ 1200 mod))
-         ;(modser1 (om-mod (om/ serie1 factmod) mod))
          (modser2 (om-mod (om/ serie2 factmod) mod)))
     (posn-match serie1 modser2)))
 
@@ -417,27 +406,27 @@ The result is a cartesian product of l1? by l2?.
 (defmethod! saw ((list list) (pas integer)) 
   :icon 129
   :initvals '((1 2) 12)
-  :doc "permutation avec alternance"
+  :doc "Alternating permutation"
   (flat (mat-trans (reverse (old-list-modulo list pas)))))
 
 (defmethod! rand-saw ((list list) (pas integer)) 
   :icon 129
   :initvals '((1 2) 12)
-  :doc "permutation avec alternance"
+  :doc "Alternating permutation"
   (flat (mat-trans (permut-random (old-list-modulo list pas)))))
 
 
 (defmethod! circ-saw ((list list) (pas integer) &optional (del 1))
   :icon 129
   :initvals '((1 2) 12 1)
-  :doc "permutation avec alternance"
+  :doc "Alternating oscillation"
   (flat (mat-trans (rotate  (old-list-modulo list pas) del))))
 
 
 (defmethod! oscil-permut ((list list))
   :icon 129
   :initvals '((1 2 3 4 5))
-  :doc "oscillation entre les extremes"
+  :doc "Oscillation between extremes"
   (let ((explode (list-explode list 2)))
     (flat (mat-trans (list (first explode) (reverse (second explode)))))))
 
@@ -445,7 +434,7 @@ The result is a cartesian product of l1? by l2?.
 (defmethod! oscil-permutn ((list list) (deep integer)) 
   :icon 129
   :initvals '((1 2 3 4 5) 1)
-  :doc "oscillation entre les extremes avec contrÙle de profondeur"
+  :doc "Oscillation between extremes with depth control"
   (let ((aux list))
     (dotimes (n deep aux)
       (setf aux (oscil-permut aux)))))
@@ -454,8 +443,9 @@ The result is a cartesian product of l1? by l2?.
 (defmethod! rev-saw ((list list) (pas integer)) 
   :icon 129
   :initvals '((1 2 3 4 5) 2)
-  :doc "permutation en scie inversée"
+  :doc "Reversed saw permutation."
   (flat  (reverse (list-explode  list pas))))
+
 ;----------------------------------------------------------------------
 
 (defmethod! kreus0 ((list list)) 
@@ -484,6 +474,7 @@ The result is a cartesian product of l1? by l2?.
     (dotimes (n pas aux)
       (setf aux (kreus0 aux)))))
 
+
 (defmethod! kreus0-1 ((list list))
   "Kreuspiel permutation"
   (let* ((longlist (length list))
@@ -508,6 +499,8 @@ The result is a cartesian product of l1? by l2?.
   (let ((aux list))
     (dotimes (n pas aux)
       (setf aux (kreus0-1 aux)))))
+
+
 ;--------------------------------------------------------------------------
 (defun spiral-out-left (list)
   (let* ((long (length list))
@@ -530,31 +523,29 @@ The result is a cartesian product of l1? by l2?.
   (let* ((long (length list))
          (index (om-ceiling (om/ long 2))))
     (posn-match list
-                    (x-append (reverse (arithm-ser (1- long) index 1 ))
-                                  (rotate (reverse (arithm-ser 0 (1- index) 1 )) 1)))))
+                (x-append (reverse (arithm-ser (1- long) index 1 ))
+                          (rotate (reverse (arithm-ser 0 (1- index) 1 )) 1)))))
 
 (defun spiral-in-rigth (list)
   (let* ((long (length list))
          (index (om// long 2)))
     (posn-match list
-                    (x-append (rotate (reverse (arithm-ser index (1- long) 1 )) -1)
-                                  (reverse (arithm-ser 0 (1- index) 1 ))
-                                  ))))
+                (x-append (rotate (reverse (arithm-ser index (1- long) 1 )) -1)
+                          (reverse (arithm-ser 0 (1- index) 1 ))
+                          ))))
 
 (defmethod! spiral ((list list) (mode integer) (deep integer))
   :icon 129
   :initvals '((1 2) 1 1)
-  :menuins '( (1 (("out-l"  1) ("out-r" 2)
-              ("in-l"  3) ("in-r"  3)) ))
-  :doc "spiral permutation"
-  
+  :menuins '( (1 (("out-l" 1) ("out-r" 2) ("in-l" 3) ("in-r" 4))))
+  :doc "Spiral permutation"
   (let ((aux (list list)))
     (dotimes (n deep (reverse aux))
-      (push (funcall  (case mode
-                        (1 'spiral-out-left)
-                        (2 'spiral-out-rigth)
-                        (3 'spiral-in-left)
-                        (4  'spiral-in-rigth))  (first aux)) aux))))
+      (push (funcall (case mode
+                       (1 'spiral-out-left)
+                       (2 'spiral-out-rigth)
+                       (3 'spiral-in-left)
+                       (4  'spiral-in-rigth))  (first aux)) aux))))
 
 
 
@@ -565,7 +556,7 @@ The result is a cartesian product of l1? by l2?.
 (defmethod! permut-dyn ((liste list ))
   :icon 129
   :initvals '((1 2 3 4 5))
-  :doc "calcule une permutation dynamique d'une liste complète jusqu'à sa mise en ordre. "
+  :doc "Computes the dynamic permutation of a list until it's in order."
   (let ((aux1  )
         (aux2 (copy-list liste))
         (aux3 nil)
@@ -583,9 +574,9 @@ The result is a cartesian product of l1? by l2?.
 
 (defmethod! permut-dyn1 ((lis1 list ) (lis2 list ))
   :icon 129
-  :initvals '((1 2 3 4 5) (1 2 ))
-  :doc "calcule une permutation dynamique entre <liste> et <liste2>.
-Les deux listes doivent contenir les mÍmes éléments!!"
+  :initvals '((1 2 3 4 5) (1 2))
+  :doc "Computes a dynamic permutation between <liste> and <liste2>.
+The lists must contain the same elements!"
   (let ((aux1  nil)
         (aux2 (copy-list lis1))
         (aux3 nil)
@@ -600,12 +591,11 @@ Les deux listes doivent contenir les mÍmes éléments!!"
       (setf aux3  (permut-random aux3))
       (setf aux2 (construct-aux2 aux2 aux3  memo-pos))  
       )))
-;====================================================================
 
 ;= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-;==========cette fonction verifie si un element est plus petit que 1 et egal a 1===========
-;             version recursive
 
+;Cheack if an element is smaller or equal to 1
+; recursive version
 (defun verifier1 (liste)
   (cond ((null liste) nil)
         ((atom liste) (if (< liste 1) 1 liste))
@@ -613,14 +603,12 @@ Les deux listes doivent contenir les mÍmes éléments!!"
                  (verifier1 (cdr liste))))))
 
 
-(defun verifierx (liste   x)
+(defun verifierx (liste x)
   (cond ((null liste) nil)
         ((atom liste) (if (<= liste x) x liste))
         (t (cons (verifierx (car liste) x)
                  (verifierx (cdr liste) x)))))
 
-;====================================================================
-; ramene par pas une liste a 1
 
 (defmethod! single-to-1 ((liste list)) 
   :icon 129
@@ -645,10 +633,10 @@ Les deux listes doivent contenir les mÍmes éléments!!"
 
 ; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
-(defmethod! permut->to-1 ((liste list ))
+(defmethod! permut->to-1 ((liste list))
   :icon 129
   :initvals '(((1 2) (2 1)))
-  :doc "prend une liste de permutations ( de permut-dyn par exemple), ou n'importe et la ramène à 1"
+  :doc "Takess a list of permutations (from permut-dyn for instance) and brings it back to 1"
   (let ((aux )
         (aux1)
         (liste-de-1 (create-list (length (first liste)) 1)))
@@ -661,8 +649,7 @@ Les deux listes doivent contenir les mÍmes éléments!!"
           ((equal aux1 liste-de-1 )  (reverse aux))
         (push (setf aux1 (verifier1 (permut-random (om- aux1 indice)) )) aux)))))
 
-;observation!!! les decrements sont faits indépendament, mÍme si la permutation c'est répétée!!!!!
-; 
+;Note: decrements are done independently, even if permutation is repeated!
 (defmethod! permut->to-x ((liste list ) (x integer)) 
   :icon 129
   :initvals '(((1 2) (2 1)) 1)
@@ -710,22 +697,31 @@ et les bornes sont fixes. <Variable> est en midicents et <binf> et <bsup> sont e
 (defmethod! puls/mes ((mesures list) (pulses list))
   :icon 129
   :initvals '((2 2) (3 3))
-  :doc "construction d'une streucture rythmique
-ayant une séquence de <mesures> (subdivisions) avec <pulses> pulses
-par mesure"
+  :doc "Build a rhythmic structure with a sequence of <mesures> (subdivisions) and <pulses> pulsesper measure."
   (mapcar #'(lambda (m p) (list m  p))  
           mesures (mapcar #'(lambda (x) (create-list x 1)) pulses)))
+
+
+(defun get-nth-measure (n meslist loop-p)
+   (let ((len (length meslist)))
+     (cond
+      ((null loop-p) 
+       (if (< n (1- len))
+           (nth n meslist) 
+         (car (last meslist))))
+      (t (nth (mod n len)  meslist)))))
 
 (defmethod! make-measures ((mesures t) &optional n loop)
   :icon 129
   :initvals '(((4 4)) nil nil)
-  :doc "construction d'une listes de mesures à partir des signatures if <n> is given create n masures
+  :doc "Build a list of measures from signatures.
+If <n> is given create n masures.
 <loop> flag make circular measures else the last is repeat."
   (let* ((mesures (if (listp (car mesures)) mesures (list mesures))))
     (when (and n (> n (length mesures)))
       (setf mesures
             (loop for i from 0 to (- n 1)
-                  collect (get-ieme-measure i mesures loop))))
+                  collect (get-nth-measure i mesures loop))))
     (loop for mes in mesures collect
           (list mes (create-list  (car mes) 1)))))
 
