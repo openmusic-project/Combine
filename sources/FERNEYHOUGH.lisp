@@ -141,7 +141,7 @@ Note: in the mode <interv> transposition is in en midicents!"
 (defmethod! rot90 ((serie list)  &optional (mod 12)) 
   :icon 129
   :initvals '((6000) 12)
-  :doc "Rotation of 90� from Walter O'Connell. 
+  :doc "Rotation of 90° from Walter O'Connell. 
 Inversion between dates and pitches."
   (m->mc 
    (second 
@@ -396,7 +396,7 @@ The result is a cartesian product of l1? by l2?.
 (defmethod! prolifer ((serie1 list) (serie2 list) &optional (mod 12)) 
   :icon 129
   :initvals '((1 2) (1 2) 12)
-  :doc "Proliferating series from Baraqu�"
+  :doc "Proliferating series from Baraqué"
   (let* ((factmod (/ 1200 mod))
          (modser2 (om-mod (om/ serie2 factmod) mod)))
     (posn-match serie1 modser2)))
@@ -613,7 +613,7 @@ The lists must contain the same elements!"
 (defmethod! single-to-1 ((liste list)) 
   :icon 129
   :initvals '((1 2 3 4 5))
-  :doc "prend une liste simple et la réduit à une liste de 1"
+  :doc "prend une liste simple et la réduit á une liste de 1"
   (let ((aux )  (len (length liste)))
     (dotimes (m len aux)
       (push  (verifier1 (om- liste m)) aux))
@@ -622,7 +622,7 @@ The lists must contain the same elements!"
 (defmethod! single-to-x ((liste list)  (x integer)) 
   :icon 129
   :initvals '((1 2 3 4 5) 1)
-  :doc "prend une liste simple et la réduit à une liste de  x"
+  :doc "prend une liste simple et la réduit á une liste de  x"
   (do ((aux ) 
        (aux1)
        (indice 0 (1+ indice))
@@ -653,7 +653,7 @@ The lists must contain the same elements!"
 (defmethod! permut->to-x ((liste list ) (x integer)) 
   :icon 129
   :initvals '(((1 2) (2 1)) 1)
-  :doc "prend une liste de permutations ( de permut-dyn par exemple), ou n'importe  et la ramène à x"
+  :doc "prend une liste de permutations ( de permut-dyn par exemple), ou n'importe  et la ramÃ¨ne á x"
   (let ((aux )
         (aux1)
         (liste-de-1 (create-list (length (first liste)) x)))
@@ -676,7 +676,7 @@ The lists must contain the same elements!"
 
 #|
 (defmethod* teste1 (( variable t) (binf t) (bsup t) (mod t)) t
-  "test la <variable>est entre binf et bsup, et la raméne à l'interieure par +/- mod " 
+  "test la <variable>est entre binf et bsup, et la raméne á l'interieure par +/- mod " 
   (let ((variable (/ variable 100)) )
     (* 100 (if (> variable bsup) (- bsup (- mod  (pw::ll/mod (- variable bsup)  mod)))
                (if (< variable binf) (+ binf (- mod  (pw::ll/mod (- binf variable )  mod)))  variable) )
@@ -684,7 +684,7 @@ The lists must contain the same elements!"
 
 
 (defmethod* teste1a (( variable t) (binf t) (bsup t) (mod integer))
-  "test la <variable>est entre binf et bsup, et la raméne à l'interieure par +/- mod, variable est une liste, 
+  "test la <variable>est entre binf et bsup, et la raméne á l'interieure par +/- mod, variable est une liste, 
 et les bornes sont fixes. <Variable> est en midicents et <binf> et <bsup> sont en midi " 
   
   (mapcar #'(lambda (l) (teste1 l binf bsup mod))  variable)
@@ -808,7 +808,7 @@ ATTENTION:<objet> est la sortie d'une RTM avec une structure quelconque!!!"
    liste2, est une liste pour les subdivisions. l'élém. 'n' indique qu'on va subdiviser
            la n'éme pulsation en 'n' parties
    sub est un pointeur qui indique quelle est la prochaine subdivision
-   index, doit être toujours zéro
+   index, doit Ãªtre toujours zéro
    place, est la liste des positions des pulses qui seront subdivisés"
   
   (dotimes (n (length (second liste1)) liste1 )
@@ -937,7 +937,7 @@ reverse d'une mesure-spéculaire"
             "permutation circulaire du premier niveaux de pulses d'une mesure.
 <objet> est la sortie d'un module `RTM
 <circ> est un argument optionnel indiquant de combien de pas est la permutation circulaire
-       il peut être soit un nombre soit une liste (une permutation différente pour chaque mesure"
+       il peut Ãªtre soit un nombre soit une liste (une permutation différente pour chaque mesure"
   (let* ((mesures (cond 
                    ((typep objet 'pw::c-measure-line) (pw::rtm-dim objet 1))
                    ((listp objet) objet)
@@ -982,8 +982,8 @@ reverse d'une mesure-spéculaire"
 (defmethod! div-pul-lis ((objet  list (:value '() :type-list (list  pw::measure-line)))
                          (sub numbers?))list
             "ce module subdivise toutes les pulsations d'une mesure par <sub>,
-l'entrée mesures doit être la sortie d'une rtm!!!
-<sub peut être une subdivision ou une liste de subdivisions"
+l'entrée mesures doit Ãªtre la sortie d'une rtm!!!
+<sub peut Ãªtre une subdivision ou une liste de subdivisions"
   (let ((mesures (cond 
                   ((typep objet 'pw::c-measure-line) (pw::rtm-dim objet 1))
                   ((listp objet) objet)
@@ -1027,7 +1027,7 @@ Pour indiquer qu'on veut un pattern il faut indiquer
                               (t (make-mesure-c n princip secondaires pat)))
                              aux )))))))
 
-; ici la lecture des indices est faite de façon circulaire!!!!!!!
+; ici la lecture des indices est faite de faÃ§on circulaire!!!!!!!
 
 ;================================================================================
 
@@ -1048,8 +1048,8 @@ Pour indiquer qu'on veut un pattern il faut indiquer
 ;==========================================================================================
 ;///////////////////////////////////////////////////////////////////////////////////////////
 (defun appartient? (element liste)
-"cette fonction retourne 't si <element> appartient à <liste>
-où nil au cas contraire"
+"cette fonction retourne 't si <element> appartient á <liste>
+oÃ¹ nil au cas contraire"
 
  (not (null (member element liste)))) 
 
@@ -1063,7 +1063,7 @@ où nil au cas contraire"
    liste2, est une liste pour les subdivisions. l'élém. 'n' indique qu'on va subdiviser
            la n'éme pulsation en 'n' parties
    sub est un pointeur qui indique quelle est la prochaine subdivision
-   index, doit être toujours zéro
+   index, doit Ãªtre toujours zéro
    place, est la liste des positions des pulses qui seront subdivisés"
   
   (dotimes (n (length (second liste1)) liste1 )
@@ -1152,8 +1152,8 @@ Cette fonction saute les pauses!!"
 ;==============================================================
 ;::::::::::::::::::::::::fonction auxiliaire:::::::::::::::::::
 (defmethod! retirex ((liste list) (place fix>0) (n-elem fix>0))list
-"retirex les <n-elem> éléments de la liste <liste> à partir de la place
-<place>. OBS: place=1 c'est-à-dire premier élément de liste"
+"retirex les <n-elem> éléments de la liste <liste> á partir de la place
+<place>. OBS: place=1 c'est-á-dire premier élément de liste"
   (let ((aux))
     (dotimes (n n-elem (reverse aux))
       (push (nth (mod (+ n place (- 1)) (length liste)) liste) aux))))
@@ -1161,8 +1161,8 @@ Cette fonction saute les pauses!!"
 
 #|
 (defmethod! retire ((liste list) (place fix>0) (n-elem fix>0)) list
-"retire les <n-elem> éléments de la liste <liste> à partir de la place
-<place>. OBS: place=0 c'est-à-dire premier élément de liste"
+"retire les <n-elem> éléments de la liste <liste> á partir de la place
+<place>. OBS: place=0 c'est-á-dire premier élément de liste"
 (nthcdr place (butlast liste (- (length liste) (+ place n-elem)))))
 |#
 
@@ -1186,7 +1186,7 @@ OBS:!:!:! Cette fonction permet la manipulation de séries numeriques modulo <mo
 
 (defmethod! muzak3 ((liste list) (inlock list) (places list) (n-pitches list)) list
 "interlock <inlock> sequence with <liste>.
-<places> se référe à <liste> et <n-pitches> à <inlock>"
+<places> se référe á <liste> et <n-pitches> á <inlock>"
 (let ((aux) 
       (plik (butlast (dx->x 1 n-pitches) 1))
       (pins (rest (dx->x 0 places)))
